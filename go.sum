@@ -1,0 +1,10 @@
+github.com/hotsixman/ndj-flow-client-go v0.1.0 h1:Mvqy2mZrY6ormPtb9pIpFCAO0NJmBWMCVGeBHSE4Zow=
+github.com/hotsixman/ndj-flow-client-go v0.1.0/go.mod h1:4nii6r/YUbDm80u6UcgXKcz4nDwwyrJNdCDTir5DUJ0=
+github.com/hotsixman/ndj-flow-client-go v0.1.1 h1:xPAGDJlorGqryEc8SErbifHkTw/TrEUFNrs8cSb3cuk=
+github.com/hotsixman/ndj-flow-client-go v0.1.1/go.mod h1:4nii6r/YUbDm80u6UcgXKcz4nDwwyrJNdCDTir5DUJ0=
+github.com/hotsixman/ndj-flow-client-go v0.1.2 h1:/OTgQxykX3f+BD8akd207wh36H7BfMaqwgdSAtYfXa8=
+github.com/hotsixman/ndj-flow-client-go v0.1.2/go.mod h1:4nii6r/YUbDm80u6UcgXKcz4nDwwyrJNdCDTir5DUJ0=
+github.com/joho/godotenv v1.5.1 h1:7eLL/+HRGLY0ldzfGMeQkb7vMd0as4CfYvUVzLqw0N0=
+github.com/joho/godotenv v1.5.1/go.mod h1:f4LDr5Voq0i2e/R5DDNOoa2zzDfwtkZa6DnEwAbqwq4=
+github.com/mitchellh/mapstructure v1.5.0 h1:jeMsZIYE/09sWLaz43PL7Gy6RuMjD2eJVyuac5Z2hdY=
+github.com/mitchellh/mapstructure v1.5.0/go.mod h1:bFUtVrKA4DC2yAKiSyO/QUcy7e+RRV2QTWOzhPopBRo=

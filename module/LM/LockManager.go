@@ -1,18 +1,9 @@
-package main
+package LM
 
 import (
+	"file-lock-manager/module/types"
 	"path/filepath"
-	"strconv"
 	"sync"
-)
-
-const (
-	StatusIdle       = 0
-	StatusReading    = 1
-	StatusMovingFrom = 2
-	StatusMovingTo   = 3
-	StatusDeleting   = 4
-	StatusLocked     = 5
 )
 
 type LockManager struct {
@@ -30,16 +21,12 @@ func NewLockManager() *LockManager {
 
 func (this *LockManager) Lock(path string, status int) (int, error) {
 	if status < 1 || status > 5 {
-		return 0, &LockManagerException{
-			code: INVALID_STATUS,
-		}
+		return 0, &types.LockManagerException{Code: types.ExceptionStatus.INVALID_STATUS}
 	}
 
 	path = filepath.Clean(path)
 	if !filepath.IsAbs(path) {
-		return 0, &LockManagerException{
-			code: PATH_IS_NOT_ABS,
-		}
+		return 0, &types.LockManagerException{Code: types.ExceptionStatus.PATH_IS_NOT_ABS}
 	}
 
 	this.mu.Lock()
@@ -48,9 +35,7 @@ func (this *LockManager) Lock(path string, status int) (int, error) {
 	// check
 	currentLockStatus := this.locks[path]
 	if currentLockStatus > 0 {
-		return currentLockStatus, &LockManagerException{
-			code: ALREADY_LOCKED,
-		}
+		return currentLockStatus, &types.LockManagerException{Code: types.ExceptionStatus.ALREADY_LOCKED}
 	}
 
 	// ancestors check
@@ -58,17 +43,13 @@ func (this *LockManager) Lock(path string, status int) (int, error) {
 	for _, ancestor := range ancestors {
 		ancestorLockStatus := this.locks[ancestor]
 		if ancestorLockStatus > 0 {
-			return 5, &LockManagerException{
-				code: ANCESTOR_LOCKED,
-			}
+			return 5, &types.LockManagerException{Code: types.ExceptionStatus.ANCESTOR_LOCKED}
 		}
 	}
 
 	// decendents check
 	if this.ancestorLocks[path] > 0 {
-		return 5, &LockManagerException{
-			code: DECENDENT_LOCKED,
-		}
+		return 5, &types.LockManagerException{Code: types.ExceptionStatus.DECENDENT_LOCKED}
 	}
 
 	// ancestorLocks 관리
@@ -85,9 +66,7 @@ func (this *LockManager) Lock(path string, status int) (int, error) {
 func (this *LockManager) Unlock(path string) error {
 	path = filepath.Clean(path)
 	if !filepath.IsAbs(path) {
-		return &LockManagerException{
-			code: PATH_IS_NOT_ABS,
-		}
+		return &types.LockManagerException{Code: types.ExceptionStatus.PATH_IS_NOT_ABS}
 	}
 
 	this.mu.Lock()
@@ -96,9 +75,7 @@ func (this *LockManager) Unlock(path string) error {
 	// check
 	currentLockStatus := this.locks[path]
 	if currentLockStatus == 0 {
-		return &LockManagerException{
-			code: ALREADY_UNLOCKED,
-		}
+		return &types.LockManagerException{Code: types.ExceptionStatus.ALREADY_UNLOCKED}
 	}
 
 	// ancestors check
@@ -116,7 +93,6 @@ func (this *LockManager) Unlock(path string) error {
 
 	// lock
 	delete(this.locks, path)
-
 	return nil
 }
 
@@ -130,9 +106,7 @@ type LockInfo struct {
 func (this *LockManager) CheckLocked(path string) (*LockInfo, error) {
 	path = filepath.Clean(path)
 	if !filepath.IsAbs(path) {
-		return nil, &LockManagerException{
-			code: PATH_IS_NOT_ABS,
-		}
+		return nil, &types.LockManagerException{Code: types.ExceptionStatus.PATH_IS_NOT_ABS}
 	}
 
 	this.mu.Lock()
@@ -154,42 +128,10 @@ func (this *LockManager) CheckLocked(path string) (*LockInfo, error) {
 
 	return &LockInfo{
 		Status:          currentLockStatus,
-		Blocked:         ancestorLocked || decendentLocked,
+		Blocked:         ancestorLocked || decendentLocked || (currentLockStatus > 0),
 		AncestorLocked:  ancestorLocked,
 		DecendentLocked: decendentLocked,
 	}, nil
-}
-
-const (
-	INVALID_STATUS   = 1
-	PATH_IS_NOT_ABS  = 2
-	ALREADY_LOCKED   = 3
-	ANCESTOR_LOCKED  = 4
-	DECENDENT_LOCKED = 5
-	ALREADY_UNLOCKED = 6
-)
-
-type LockManagerException struct {
-	code int
-}
-
-func (e *LockManagerException) Error() string {
-	msg := ""
-	switch e.code {
-	case INVALID_STATUS:
-		msg = "invalid status"
-	case PATH_IS_NOT_ABS:
-		msg = "path is not absolute"
-	case ALREADY_LOCKED:
-		msg = "already locked"
-	case ANCESTOR_LOCKED:
-		msg = "ancestor is locked"
-	case DECENDENT_LOCKED:
-		msg = "descendant is locked"
-	default:
-		msg = "unknown error"
-	}
-	return "LockError " + strconv.Itoa(e.code) + ": " + msg
 }
 
 func getAncestors(path string) []string {
