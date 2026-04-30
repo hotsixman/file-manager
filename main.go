@@ -1,8 +1,8 @@
 package main
 
 import (
-	"file-lock-manager/module/LM"
-	"file-lock-manager/module/socket"
+	"file-manager/module/LM"
+	"file-manager/module/connect"
 	"fmt"
 	"os"
 
@@ -16,7 +16,15 @@ func init() {
 
 func main() {
 	lm := LM.NewLockManager()
+	client := NewClient(lm)
 
+	client.Connect()
+	fmt.Println("Connected.")
+
+	select {}
+}
+
+func NewClient(lm *LM.LockManager) *ndj.UDSClient {
 	client := ndj.NewUDSClient(ndj.UDSClientOption{
 		Path: os.Getenv("UDS_PATH"),
 		ClientOption: ndj.ClientOption{
@@ -24,14 +32,10 @@ func main() {
 			Key:  "foo",
 		},
 	})
-
-	onReceive := socket.NewReceiver(lm, client.Client)
+	onReceive := connect.NewReceiver(lm, client.Client)
 	client.Client.OnReceive = onReceive
 	client.Client.OnError = func(err error) {
 		fmt.Println("error:", err)
 	}
-	client.Connect()
-	fmt.Println("Connect")
-
-	select {}
+	return client
 }

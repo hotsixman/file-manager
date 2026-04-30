@@ -1,7 +1,7 @@
 package LM
 
 import (
-	"file-lock-manager/module/types"
+	"file-manager/module/types"
 	"path/filepath"
 	"sync"
 )

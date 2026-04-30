@@ -1,4 +1,4 @@
-module file-lock-manager
+module file-manager
 
 go 1.26.1
 
