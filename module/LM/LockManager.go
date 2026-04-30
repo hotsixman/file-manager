@@ -47,10 +47,16 @@ func (this *LockManager) Lock(path string, status int) (int, error) {
 		}
 	}
 
-	// decendents check
-	if this.ancestorLocks[path] > 0 {
-		return 5, &types.LockManagerException{Code: types.ExceptionStatus.DECENDENT_LOCKED}
-	}
+	/*
+		@update 0.1.0
+		자손이 잠겨있어도 잠굴 수 있음.
+		이 경우 자손이 잠금을 풀어도 조상은 잠금이 풀리지 않음.
+		이 때 다시 자손을 잠구는 것은 불가능.
+		// decendents check
+		if this.ancestorLocks[path] > 0 {
+			return 5, &types.LockManagerException{Code: types.ExceptionStatus.DECENDENT_LOCKED}
+		}
+	*/
 
 	// ancestorLocks 관리
 	for _, ancestor := range ancestors {
@@ -103,7 +109,7 @@ type LockInfo struct {
 	DecendentLocked bool `json:"decendentLocked"`
 }
 
-func (this *LockManager) CheckLocked(path string) (*LockInfo, error) {
+func (this *LockManager) Check(path string) (*LockInfo, error) {
 	path = filepath.Clean(path)
 	if !filepath.IsAbs(path) {
 		return nil, &types.LockManagerException{Code: types.ExceptionStatus.PATH_IS_NOT_ABS}
@@ -128,7 +134,7 @@ func (this *LockManager) CheckLocked(path string) (*LockInfo, error) {
 
 	return &LockInfo{
 		Status:          currentLockStatus,
-		Blocked:         ancestorLocked || decendentLocked || (currentLockStatus > 0),
+		Blocked:         ancestorLocked || (currentLockStatus > 0),
 		AncestorLocked:  ancestorLocked,
 		DecendentLocked: decendentLocked,
 	}, nil

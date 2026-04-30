@@ -120,7 +120,7 @@ func check(message ndj.Message, lm *LM.LockManager, client *ndj.Client) {
 		return
 	}
 
-	result, err := lm.CheckLocked(data.Path)
+	result, err := lm.Check(data.Path)
 	if err != nil {
 		status := "500"
 		if exception, ok := errors.AsType[*types.LockManagerException](err); ok {
