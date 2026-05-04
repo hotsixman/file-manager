@@ -34,14 +34,14 @@ API 응답의 `status` 메타데이터 필드에 포함되는 코드들이다.
 특정 리소스를 지정된 상태로 잠근다.
 - **Command**: `lock`
 - **Request Body**:
-  ```json
+  ```ts
   {
       "path": string,
       "status": 1 | 2 | 3 | 4 | 5
   }
   ```
 - **Response Body**:
-  ```json
+  ```ts
   [
       {
           "status": number
@@ -53,7 +53,7 @@ API 응답의 `status` 메타데이터 필드에 포함되는 코드들이다.
 특정 리소스의 잠금을 해제한다.
 - **Command**: `unlock`
 - **Request Body**:
-  ```json
+  ```ts
   {
       "path": string
   }
@@ -64,13 +64,13 @@ API 응답의 `status` 메타데이터 필드에 포함되는 코드들이다.
 특정 리소스의 현재 잠금 상태를 확인한다.
 - **Command**: `check`
 - **Request Body**:
-  ```json
+  ```ts
   {
       "path": string
   }
   ```
 - **Response Body**:
-  ```json
+  ```ts
   [
       {
           "status": number,
@@ -88,7 +88,7 @@ API 응답의 `status` 메타데이터 필드에 포함되는 코드들이다.
 #### 이동 / 복사 / 이름 변경
 - **Commands**: `movePre`, `movePost`, `copyPre`, `copyPost`, `renamePre`, `renamePost`
 - **Request Body**:
-  ```json
+  ```ts
   {
       "src": string,
       "dest": string
@@ -100,7 +100,7 @@ API 응답의 `status` 메타데이터 필드에 포함되는 코드들이다.
 #### 삭제 / 읽기 / 업로드 / 다운로드
 - **Commands**: `deletePre`/`Post`, `readPre`/`Post`, `uploadPre`/`Post`, `downloadPre`/`Post`
 - **Request Body**:
-  ```json
+  ```ts
   {
       "path": string
   }
